@@ -74,9 +74,9 @@ class Popup {
 	static function drawBorder(g:kha.graphics2.Graphics,x:Float,y:Float,w:Float){
 		g.color = ui.t.SEPARATOR_COL;
 		var height = ui._h - borderW - borderOffset-y;
-		ui.drawRect(g, true, x , y, borderW,height);
-		ui.drawRect(g, true, w - x - borderW , y, borderW,height);
-		ui.drawRect(g, true, x,height+y-borderW*0.5, w, borderW);
+		ui.drawRect(g, true, x , y, borderW,height+borderW);
+		ui.drawRect(g, true, w - x - borderW , y, borderW,height+borderW);
+		ui.drawRect(g, true, x,height+y+borderW, w, borderW);
 		if(boxTitle != "" && titleDrawn)
 			hwnd.redraws = 2;
 	}
