@@ -38,6 +38,7 @@ class Zui {
 	public static var onTextHover: Void->Void = null; // Mouse over text input, use to set I-cursor
 	public static var alwaysRedrawWindow = true; // Redraw cached window texture each frame or on changes only
 	public static var keyRepeat = true; // Emulate key repeat for non-character keys
+	public static var dynamicGlyphLoad = true; // Allow text input fields to push new glyphs into the font atlas
 	#if (kha_android || kha_ios)
 	public static var touchControls = true; // Pan with two fingers to scroll, hold finger for right click
 	#else
@@ -71,6 +72,7 @@ class Zui {
 	public var isDeleteDown = false;
 	public var isEscapeDown = false;
 	public var isReturnDown = false;
+	public var isTabDown = false;
 	public var key: Null<KeyCode> = null;
 	public var char: String;
 	static var textToPaste = "";
@@ -552,6 +554,14 @@ class Zui {
 		_y = currentWindow.dragEnabled ? HEADER_DRAG_H() : 0;
 		tabHandle.changed = false;
 
+		if (isCtrlDown && isTabDown) { // Next tab
+			tabHandle.position++;
+			if (tabHandle.position >= tabNames.length) tabHandle.position = 0;
+			isTabDown = false;
+		}
+
+		if (tabHandle.position >= tabNames.length) tabHandle.position = tabNames.length - 1;
+
 		g.color = t.SEPARATOR_COL; // Tab background
 		tabVertical ?
 			g.fillRect(0, _y, ELEMENT_W(), _windowH) :
@@ -781,7 +791,7 @@ class Zui {
 				textSelected = textSelectedHandle.text;
 				deselectText();
 			}
-			else if (key == KeyCode.Tab && tabSwitchEnabled) { // Next field
+			else if (key == KeyCode.Tab && tabSwitchEnabled && !isCtrlDown) { // Next field
 				tabPressed = true;
 				deselectText();
 				key = null;
@@ -809,6 +819,11 @@ class Zui {
 					 char.charCodeAt(0) >= 32) {
 				text = text.substr(0, highlightAnchor) + char + text.substr(cursorX);
 				cursorX = cursorX + 1 > text.length ? text.length : cursorX + 1;
+
+				if (dynamicGlyphLoad && char.charCodeAt(0) > 126 && Graphics.fontGlyphs.indexOf(char.charCodeAt(0)) == -1) {
+					Graphics.fontGlyphs.push(char.charCodeAt(0));
+					Graphics.fontGlyphs = Graphics.fontGlyphs.copy(); // Trigger atlas update
+				}
 			}
 			var selecting = isShiftDown && (key == KeyCode.Left || key == KeyCode.Right || key == KeyCode.Shift);
 			if (!selecting && !isCtrlDown) highlightAnchor = cursorX;
@@ -1189,6 +1204,7 @@ class Zui {
 		var offset = (value - from) / (to - from);
 		var barW = 8 * SCALE(); // Unfilled bar
 		var sliderX = filled ? x : x + (w - barW) * offset;
+		sliderX = Math.max(Math.min(sliderX, x + (w - barW)), x);
 		var sliderW = filled ? w * offset : barW;
 		sliderW = Math.max(Math.min(sliderW, w), 0);
 		drawRect(g, true, sliderX, y, sliderW, BUTTON_H());
@@ -1539,6 +1555,7 @@ class Zui {
 		case KeyCode.Delete: isDeleteDown = true;
 		case KeyCode.Escape: isEscapeDown = true;
 		case KeyCode.Return: isReturnDown = true;
+		case KeyCode.Tab: isTabDown = true;
 		case KeyCode.A: isADown = true;
 		case KeyCode.Space: char = " ";
 		#if kha_android_rmb // Detect right mouse button on Android..
@@ -1561,6 +1578,7 @@ class Zui {
 		case KeyCode.Delete: isDeleteDown = false;
 		case KeyCode.Escape: isEscapeDown = false;
 		case KeyCode.Return: isReturnDown = false;
+		case KeyCode.Tab: isTabDown = false;
 		case KeyCode.A: isADown = false;
 		#if kha_android_rmb
 		case KeyCode.Back: onMouseUp(1, Std.int(inputX), Std.int(inputY));
