@@ -251,6 +251,7 @@ class Zui {
 		#end
 		// kha.System.removeCutCopyPaste(onCut, onCopy, onPaste);
 		endInput();
+		isShiftDown = isCtrlDown = isAltDown = false;
 		inputX = inputY = 0;
 		inputRegistered = false;
 	}
@@ -557,6 +558,7 @@ class Zui {
 		if (isCtrlDown && isTabDown) { // Next tab
 			tabHandle.position++;
 			if (tabHandle.position >= tabNames.length) tabHandle.position = 0;
+			tabHandle.changed = true;
 			isTabDown = false;
 		}
 
