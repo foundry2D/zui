@@ -594,6 +594,15 @@ class Nodes {
 				buthandle.position = but.default_value;
 				but.default_value = ui.combo(buthandle, texts, tr(but.name));
 			}
+			else if (but.type == "KEY") {
+				ny += lineh;
+				ui._x = nx;
+				ui._y = ny;
+				ui._w = w;
+				var buthandle = nhandle.nest(buti);
+				buthandle.value = but.default_value;
+				but.default_value = Ext.keyInput(ui,buthandle,tr(but.name));
+			}
 			else if (but.type == "ARRAY") {
 				ny += lineh;
 				ui._x = nx;
