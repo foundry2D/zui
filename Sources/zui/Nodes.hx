@@ -253,16 +253,18 @@ class Nodes {
 			}
 			if (ui.inputStarted && ui.getInputInRect(wx + NODE_X(node) - LINE_H() / 2, wy + NODE_Y(node) - LINE_H() / 2, NODE_W() + LINE_H(), nodeh + LINE_H())) {
 				// Check sockets
-				for (i in 0...outs.length) {
-					var sx = wx + NODE_X(node) + NODE_W();
-					var sy = wy + NODE_Y(node) + SOCKET_Y(i);
-					if (ui.getInputInRect(sx - LINE_H() / 2, sy - LINE_H() / 2, LINE_H(), LINE_H())) {
-						// New link from output
-						var l = { id: getLinkId(canvas.links), from_id: node.id, from_socket: i, to_id: -1, to_socket: -1 };
-						canvas.links.push(l);
-						linkDrag = l;
-						isNewLink = true;
-						break;
+				if (linkDrag == null) {
+					for (i in 0...outs.length) {
+						var sx = wx + NODE_X(node) + NODE_W();
+						var sy = wy + NODE_Y(node) + SOCKET_Y(i);
+						if (ui.getInputInRect(sx - LINE_H() / 2, sy - LINE_H() / 2, LINE_H(), LINE_H())) {
+							// New link from output
+							var l: TNodeLink = { id: getLinkId(canvas.links), from_id: node.id, from_socket: i, to_id: -1, to_socket: -1 };
+							canvas.links.push(l);
+							linkDrag = l;
+							isNewLink = true;
+							break;
+						}
 					}
 				}
 				if (linkDrag == null) {
@@ -281,7 +283,7 @@ class Nodes {
 							}
 							if (linkDrag != null) break;
 							// New link from input
-							var l = { id: getLinkId(canvas.links), from_id: -1, from_socket: -1, to_id: node.id, to_socket: i };
+							var l: TNodeLink = { id: getLinkId(canvas.links), from_id: -1, from_socket: -1, to_id: node.id, to_socket: i };
 							canvas.links.push(l);
 							linkDrag = l;
 							isNewLink = true;
