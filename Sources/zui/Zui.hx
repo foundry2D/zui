@@ -1320,7 +1320,8 @@ class Zui {
 		}
 		tooltipX = Math.min(tooltipX, kha.System.windowWidth() - tooltipW - 20);
 		if (bindGlobalG) globalG.begin(false);
-		globalG.fillRect(tooltipX, tooltipY, tooltipW + 20, ELEMENT_H() * lines.length * 0.6);
+		var fontHeight = ops.font.height(fontSize);
+		globalG.fillRect(tooltipX, tooltipY, tooltipW + 20, fontHeight * lines.length);
 		globalG.font = ops.font;
 		globalG.fontSize = fontSize;
 		globalG.color = t.ACCENT_COL;
@@ -1349,7 +1350,7 @@ class Zui {
 	function drawString(g: Graphics, text: String,
 						xOffset: Null<Float> = null, yOffset: Float = 0, align = Align.Left) {
 		var fullLength = text.length;
-		while (text.length > 0 && ops.font.width(fontSize, text) > _w) {
+		while (text.length > 0 && ops.font.width(fontSize, text) > _w - 6) {
 			text = text.substr(0, text.length - 1);
 		}
 		if (text.length < fullLength) text += "..";

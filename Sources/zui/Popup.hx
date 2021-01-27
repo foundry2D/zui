@@ -7,11 +7,11 @@ import kha.System;
 class Popup {
 	public static var show = false;
 
-	static var ui:Zui = null;
+	static var ui: Zui = null;
 	static var hwnd = new Handle();
 	static var boxTitle = "";
 	static var boxText = "";
-	static var boxCommands:Zui->Void = null;
+	static var boxCommands: Zui->Void = null;
 	static var modalX = 0;
 	static var modalY = 0;
 	static var modalW = 400;
@@ -107,7 +107,7 @@ class Popup {
 	 * @param title the title to display
 	 * @param text  the text to display
 	 */
-	public static function showMessage(ui:Zui, title:String, text:String) {
+	public static function showMessage(ui: Zui, title: String, text: String) {
 		Popup.ui = ui;
 		init();
 
@@ -125,7 +125,7 @@ class Popup {
 	 * @param mw       the width of the popup (defaults to 400)
 	 * @param mh       the height of the popup (defaults to 160)
 	 */
-	public static function showCustom(ui:Zui, commands:Zui->Void = null, mx = -1, my = -1, mw = 400, mh = 160) {
+	public static function showCustom(ui: Zui, commands: Zui->Void = null, mx = -1, my = -1, mw = 400, mh = 160) {
 		Popup.ui = ui;
 		init(mx, my, mw, mh);
 
@@ -144,8 +144,8 @@ class Popup {
 		modalH = Std.int(mh * ui.SCALE());
 
 		// Center popup window if no value is given
-		if (mx == -1) { modalX = Std.int(appW / 2 - modalW / 2);}
-		if (my == -1) { modalY = Std.int(appH / 2 - modalH / 2);}
+		if (mx == -1) { modalX = Std.int(appW / 2 - modalW / 2); }
+		if (my == -1) { modalY = Std.int(appH / 2 - modalH / 2); }
 
 		// Limit popup position to screen
 		modalX = Std.int(Math.max(0, Math.min(modalX, appW - modalW)));
@@ -154,6 +154,7 @@ class Popup {
 		hwnd.dragX = 0;
 		hwnd.dragY = 0;
 		titleDrawn = false;
+		hwnd.scrollOffset = 0.0;
 		show = true;
 	}
 }
